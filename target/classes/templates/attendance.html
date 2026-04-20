@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Attendance Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f9;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        select, input {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .pagination a {
+            margin: 5px;
+            padding: 8px 12px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- 📌 DASHBOARD FORM -->
+<div class="card">
+
+    <div class="title">🎓 Attendance System Dashboard</div>
+
+    <!-- ERROR MESSAGE -->
+    <div th:if="${error}" class="error">
+        <p th:text="${error}"></p>
+    </div>
+
+    <form action="/attendance/mark" method="post">
+
+        <select name="studentId" required>
+            <option value="">Select Student</option>
+            <option th:each="s : ${students}"
+                    th:value="${s.id}"
+                    th:text="${s.name}">
+            </option>
+        </select>
+
+        <select name="teacherId" required>
+            <option value="">Select Teacher</option>
+            <option th:each="t : ${teachers}"
+                    th:value="${t.id}"
+                    th:text="${t.name}">
+            </option>
+        </select>
+
+        <select name="subjectId" required>
+            <option value="">Select Subject</option>
+            <option th:each="sub : ${subjects}"
+                    th:value="${sub.id}"
+                    th:text="${sub.name}">
+            </option>
+        </select>
+
+        <select name="status" required>
+            <option value="PRESENT">Present</option>
+            <option value="ABSENT">Absent</option>
+        </select>
+
+        <button class="btn" type="submit">Mark Attendance</button>
+
+    </form>
+</div>
+
+<!-- 📅 FILTER BY DATE -->
+<div class="card">
+
+    <form action="/dashboard/day" method="get">
+
+        <input type="date" name="date" required>
+
+        <input type="hidden" name="page" value="0">
+        <input type="hidden" name="size" value="5">
+
+        <button class="btn" type="submit">Filter By Date</button>
+
+    </form>
+
+</div>
+
+<!-- 📊 TABLE -->
+<div class="card">
+
+    <h3>📅 Attendance Records</h3>
+
+    <table>
+
+        <tr>
+            <th>Student</th>
+            <th>Teacher</th>
+            <th>Subject</th>
+            <th>Date</th>
+            <th>Month</th>
+            <th>Status</th>
+        </tr>
+
+        <tr th:each="a : ${list}">
+            <td th:text="${a.student.name}"></td>
+            <td th:text="${a.teacher.name}"></td>
+            <td th:text="${a.subject.name}"></td>
+            <td th:text="${a.date}"></td>
+            <td th:text="${a.month}"></td>
+            <td th:text="${a.status}"></td>
+        </tr>
+
+    </table>
+
+    <!-- 📄 PAGINATION -->
+    <div class="pagination" th:if="${currentPage != null}">
+
+        <a th:if="${currentPage > 0}"
+           th:href="@{/dashboard/day(date=${selectedDate}, page=${currentPage - 1}, size=5)}">
+            ⬅ Prev
+        </a>
+
+        <a th:href="@{/dashboard/day(date=${selectedDate}, page=${currentPage + 1}, size=5)}">
+            Next ➡
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>
