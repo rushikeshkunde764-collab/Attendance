@@ -1,5 +1,5 @@
-# Use lightweight Java image
-FROM openjdk:21-jdk-slim
+# Use stable Java image
+FROM eclipse-temurin:17-jdk
 
 # Set working directory
 WORKDIR /app
@@ -7,8 +7,8 @@ WORKDIR /app
 # Copy jar file
 COPY target/attendaceTracker-0.0.1-SNAPSHOT.jar app.jar
 
-# Expose port (Spring Boot default)
+# Expose port
 EXPOSE 8080
 
-# Run app
+# Run application
 ENTRYPOINT ["java", "-jar", "app.jar"]
